@@ -1,36 +1,115 @@
-export default function Page() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-neutral-400">
-      <div className="flex w-full max-w-md flex-col items-start gap-8">
-        <svg
-          fill="currentColor"
-          viewBox="0 0 147 70"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          className="size-10 text-white"
-        >
-          <path d="M56 50.2031V14H70V60.1562C70 65.5928 65.5928 70 60.1562 70C57.5605 70 54.9982 68.9992 53.1562 67.1573L0 14H19.7969L56 50.2031Z" />
-          <path d="M147 56H133V23.9531L100.953 56H133V70H96.6875C85.8144 70 77 61.1856 77 50.3125V14H91V46.1562L123.156 14H91V0H127.312C138.186 0 147 8.81439 147 19.6875V56Z" />
-        </svg>
+'use client'
 
-        <div className="space-y-3">
-          <h1 className="text-balance text-2xl font-semibold tracking-tight text-white">
-            To get started, describe what you want to build.
+import { useState } from 'react'
+import { MealForm, FormData } from '@/components/meal-form'
+import { MealPlanDisplay } from '@/components/meal-plan-display'
+import { GroceryList } from '@/components/grocery-list'
+import { BudgetSummary } from '@/components/budget-summary'
+import { SubstitutionsDisplay } from '@/components/substitutions-display'
+import { MealPlanResponse } from '@/lib/schemas'
+
+export default function Page() {
+  const [mealPlan, setMealPlan] = useState<MealPlanResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleGenerateMealPlan = async (formData: FormData) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/generate-meal-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to generate meal plan')
+      }
+
+      const data = await response.json()
+      setMealPlan(data)
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred'
+      )
+      console.error('Error:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            🍽️ AI Meal Planner
           </h1>
-          <p className="text-pretty text-sm leading-relaxed text-neutral-500">
-            This is the default page for a fresh v0 project. Open the prompt and
-            tell v0 what to create, or browse the{' '}
-            <a
-              href="https://v0.app/templates"
-              target="_blank"
-              rel="noreferrer"
-              className="text-neutral-300 underline underline-offset-4 hover:text-white"
-            >
-              Community
-            </a>{' '}
-            for inspiration.
+          <p className="text-lg text-gray-600">
+            Get personalized daily meal plans tailored to your preferences and budget
           </p>
         </div>
+
+        {/* Main Content */}
+        {!mealPlan ? (
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+            <MealForm onSubmit={handleGenerateMealPlan} isLoading={isLoading} />
+            {error && (
+              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800 font-medium">Error:</p>
+                <p className="text-red-700 text-sm">{error}</p>
+                <button
+                  onClick={() => setMealPlan(null)}
+                  className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {/* Meal Plan Grid */}
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <MealPlanDisplay mealPlan={mealPlan} />
+            </div>
+
+            {/* Shopping List and Budget in 2-column layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <GroceryList mealPlan={mealPlan} />
+              </div>
+
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <BudgetSummary mealPlan={mealPlan} />
+              </div>
+            </div>
+
+            {/* Substitutions */}
+            {mealPlan.substitutions.length > 0 && (
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                <SubstitutionsDisplay mealPlan={mealPlan} />
+              </div>
+            )}
+
+            {/* Reset Button */}
+            <div className="text-center">
+              <button
+                onClick={() => {
+                  setMealPlan(null)
+                  setError(null)
+                }}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Generate Another Meal Plan
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   )

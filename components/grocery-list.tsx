@@ -32,36 +32,36 @@ export function GroceryList({ mealPlan }: GroceryListProps) {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6">Shopping List</h2>
+      <h2 className="text-2xl font-bold mb-6 text-foreground">Shopping List</h2>
       
       <div className="space-y-3">
         {groupedByCategory.map(([category, items]) => (
-          <div key={category} className="border border-gray-200 rounded-lg overflow-hidden">
+          <div key={category} className="border border-border rounded-xl overflow-hidden bg-card">
             <button
               onClick={() => toggleCategory(category)}
-              className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex justify-between items-center font-medium text-left transition-colors"
+              className="w-full px-4 py-3 bg-muted hover:bg-muted/80 flex justify-between items-center font-semibold text-left transition-colors text-foreground"
             >
               <span className="capitalize">{category}</span>
-              <span className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+              <span className="text-xs bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium">
                 {items.length} items
               </span>
             </button>
 
             {expandedCategory === category && (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border">
                 {items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="px-4 py-3 bg-white flex justify-between items-start hover:bg-gray-50"
+                    className="px-4 py-3 bg-card flex justify-between items-start hover:bg-muted/40"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{item.item}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium text-foreground">{item.item}</p>
+                      <p className="text-sm text-muted-foreground">
                         {item.quantity} {item.unit}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-primary">
                         ₹{item.estimatedCost.toFixed(0)}
                       </p>
                     </div>

@@ -11,39 +11,39 @@ export function BudgetSummary({ mealPlan }: BudgetSummaryProps) {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-6">Budget Breakdown</h2>
+      <h2 className="text-2xl font-bold mb-6 text-foreground">Budget Breakdown</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Total Cost Card */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-sm font-medium text-blue-600 mb-2">Total Daily Cost</h3>
-          <p className="text-4xl font-bold text-blue-900">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-primary mb-2">Total Daily Cost</h3>
+          <p className="text-4xl font-bold text-primary">
             ₹{budget.total.toFixed(0)}
           </p>
-          <p className="text-sm text-blue-700 mt-2">
+          <p className="text-sm text-primary/70 mt-2">
             ₹{budget.costPerServing.toFixed(0)} per serving
           </p>
         </div>
 
         {/* Cost by Meal */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="font-medium mb-4">Cost by Meal</h3>
+        <div className="bg-card border border-border rounded-xl p-6">
+          <h3 className="font-semibold mb-4 text-foreground">Cost by Meal</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Breakfast</span>
-              <span className="font-semibold text-gray-900">
+              <span className="text-muted-foreground">Breakfast</span>
+              <span className="font-semibold text-foreground">
                 ₹{budget.byMeal.breakfast.toFixed(0)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Lunch</span>
-              <span className="font-semibold text-gray-900">
+              <span className="text-muted-foreground">Lunch</span>
+              <span className="font-semibold text-foreground">
                 ₹{budget.byMeal.lunch.toFixed(0)}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600">Dinner</span>
-              <span className="font-semibold text-gray-900">
+              <span className="text-muted-foreground">Dinner</span>
+              <span className="font-semibold text-foreground">
                 ₹{budget.byMeal.dinner.toFixed(0)}
               </span>
             </div>
@@ -52,12 +52,10 @@ export function BudgetSummary({ mealPlan }: BudgetSummaryProps) {
       </div>
 
       {/* Budget Analysis */}
-      <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
-        <h3 className="font-medium text-green-900 mb-2">Budget Tips</h3>
-        <p className="text-sm text-green-800">
-          This meal plan is designed to be budget-friendly. Shop at local Indian markets for 
-          fresh produce and spices at better prices. Buy seasonal vegetables and consider buying 
-          in bulk from wholesale markets. You can also use the substitutions provided to reduce costs further.
+      <div className="mt-6 bg-accent/5 border border-accent/20 rounded-xl p-4">
+        <h3 className="font-semibold text-accent mb-2">Money-Saving Tips</h3>
+        <p className="text-sm text-foreground/70">
+          Shop at local Indian markets for fresh produce and spices at better prices. Buy seasonal vegetables and consider buying in bulk from wholesale markets. You can also use the substitutions provided to reduce costs further.
         </p>
       </div>
     </div>

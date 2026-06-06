@@ -26,45 +26,57 @@ export default function Page() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to generate meal plan')
+        const errorMsg = errorData.details || errorData.error || 'Failed to generate meal plan'
+        throw new Error(errorMsg)
       }
 
       const data = await response.json()
       setMealPlan(data)
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An unexpected error occurred'
-      )
-      console.error('Error:', err)
+      const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setError(errorMsg)
+      console.error('[v0] Meal plan generation error:', err)
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🍽️ AI Meal Planner
+    <main className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-primary text-primary-foreground py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">
+            Authentic Indian Meal Plans
           </h1>
-          <p className="text-lg text-gray-600">
-            Get personalized daily meal plans tailored to your preferences and budget
+          <p className="text-lg text-primary-foreground/90">
+            AI-powered meal planning for Indian cuisine, tailored to your budget
           </p>
         </div>
+      </div>
 
+      <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Main Content */}
         {!mealPlan ? (
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+          <div className="bg-card rounded-xl shadow-lg p-8 max-w-2xl mx-auto border border-border">
             <MealForm onSubmit={handleGenerateMealPlan} isLoading={isLoading} />
             {error && (
-              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 font-medium">Error:</p>
-                <p className="text-red-700 text-sm">{error}</p>
+              <div className="mt-6 p-6 bg-destructive/10 border border-destructive/30 rounded-xl">
+                <p className="text-destructive font-bold mb-2 text-lg">Could not generate meal plan</p>
+                <p className="text-destructive/80 text-sm mb-4 leading-relaxed">{error}</p>
+                {error.includes('credit card') && (
+                  <a
+                    href="https://vercel.com/account/billing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-sm mb-3"
+                  >
+                    Add Payment Method
+                  </a>
+                )}
                 <button
-                  onClick={() => setMealPlan(null)}
-                  className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                  onClick={() => setError(null)}
+                  className="block px-4 py-2 bg-destructive text-white rounded-lg hover:bg-destructive/90 transition-colors font-medium text-sm"
                 >
                   Try Again
                 </button>
@@ -72,38 +84,38 @@ export default function Page() {
             )}
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Meal Plan Grid */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
               <MealPlanDisplay mealPlan={mealPlan} />
             </div>
 
             {/* Shopping List and Budget in 2-column layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
                 <GroceryList mealPlan={mealPlan} />
               </div>
 
-              <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
                 <BudgetSummary mealPlan={mealPlan} />
               </div>
             </div>
 
             {/* Substitutions */}
             {mealPlan.substitutions.length > 0 && (
-              <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="bg-card rounded-xl shadow-lg p-8 border border-border">
                 <SubstitutionsDisplay mealPlan={mealPlan} />
               </div>
             )}
 
             {/* Reset Button */}
-            <div className="text-center">
+            <div className="text-center pt-4">
               <button
                 onClick={() => {
                   setMealPlan(null)
                   setError(null)
                 }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-semibold shadow-md"
               >
                 Generate Another Meal Plan
               </button>

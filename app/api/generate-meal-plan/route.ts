@@ -58,7 +58,7 @@ Generate a complete Indian meal plan including breakfast, lunch, and dinner. For
       })
 
       // Extract the structured object from the result
-      const mealPlan = result.object
+      const mealPlan = result.output
 
       return Response.json(mealPlan)
     } catch (aiError) {

@@ -26,16 +26,16 @@ export default function Page() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to generate meal plan')
+        const errorMsg = errorData.details || errorData.error || 'Failed to generate meal plan'
+        throw new Error(errorMsg)
       }
 
       const data = await response.json()
       setMealPlan(data)
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An unexpected error occurred'
-      )
-      console.error('Error:', err)
+      const errorMsg = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setError(errorMsg)
+      console.error('[v0] Meal plan generation error:', err)
     } finally {
       setIsLoading(false)
     }
@@ -61,12 +61,22 @@ export default function Page() {
           <div className="bg-card rounded-xl shadow-lg p-8 max-w-2xl mx-auto border border-border">
             <MealForm onSubmit={handleGenerateMealPlan} isLoading={isLoading} />
             {error && (
-              <div className="mt-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <p className="text-destructive font-semibold mb-1">Error generating meal plan</p>
-                <p className="text-destructive/80 text-sm mb-3">{error}</p>
+              <div className="mt-6 p-6 bg-destructive/10 border border-destructive/30 rounded-xl">
+                <p className="text-destructive font-bold mb-2 text-lg">Could not generate meal plan</p>
+                <p className="text-destructive/80 text-sm mb-4 leading-relaxed">{error}</p>
+                {error.includes('credit card') && (
+                  <a
+                    href="https://vercel.com/account/billing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-sm mb-3"
+                  >
+                    Add Payment Method
+                  </a>
+                )}
                 <button
-                  onClick={() => setMealPlan(null)}
-                  className="px-4 py-2 bg-destructive text-white rounded-lg hover:bg-destructive/90 transition-colors font-medium text-sm"
+                  onClick={() => setError(null)}
+                  className="block px-4 py-2 bg-destructive text-white rounded-lg hover:bg-destructive/90 transition-colors font-medium text-sm"
                 >
                   Try Again
                 </button>

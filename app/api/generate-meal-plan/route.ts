@@ -48,26 +48,63 @@ Always provide meals that are:
 
 Generate a complete Indian meal plan including breakfast, lunch, and dinner. For each meal, provide the recipe name, description, cooking time, and all ingredients with quantities and estimated costs in Indian Rupees. Also provide a consolidated grocery list, dietary substitutions, and a budget breakdown. Use authentic Indian ingredients and cooking methods.`
 
-    const result = await generateText({
-      model: 'openai/gpt-4o-mini',
-      system: systemPrompt,
-      prompt: userMessage,
-      output: Output.object({ schema: mealPlanResponseSchema }),
-      temperature: 0.7,
-    })
+    try {
+      const result = await generateText({
+        model: 'openai/gpt-4o-mini',
+        system: systemPrompt,
+        prompt: userMessage,
+        output: Output.object({ schema: mealPlanResponseSchema }),
+        temperature: 0.7,
+      })
 
-    // Extract the structured object from the result
-    const mealPlan = result.object
+      // Extract the structured object from the result
+      const mealPlan = result.object
 
-    return Response.json(mealPlan)
+      return Response.json(mealPlan)
+    } catch (aiError) {
+      console.error('[v0] AI SDK Error:', aiError)
+      
+      const errorMessage = aiError instanceof Error ? aiError.message : String(aiError)
+      
+      // Check for billing/credit card errors
+      if (errorMessage.includes('credit card') || errorMessage.includes('requires a valid')) {
+        return Response.json(
+          {
+            error: 'Billing setup required',
+            details: 'To use the AI Meal Planner, please add a payment method to your Vercel account at https://vercel.com/account/billing to enable AI Gateway credits.',
+          },
+          { status: 402 }
+        )
+      }
+      
+      // Check for authentication errors
+      if (errorMessage.includes('Unauthenticated') || errorMessage.includes('API_KEY')) {
+        return Response.json(
+          {
+            error: 'AI Gateway authentication failed',
+            details: 'Please ensure AI_GATEWAY_API_KEY environment variable is properly set in Vercel project settings.',
+          },
+          { status: 401 }
+        )
+      }
+
+      // Generic AI errors
+      return Response.json(
+        {
+          error: 'Failed to generate meal plan',
+          details: errorMessage,
+        },
+        { status: 500 }
+      )
+    }
   } catch (error) {
-    console.error('Error generating meal plan:', error)
+    console.error('[v0] Request Error:', error)
     return Response.json(
       {
-        error: 'Failed to generate meal plan',
-        details: error instanceof Error ? error.message : String(error),
+        error: 'Invalid request',
+        details: error instanceof Error ? error.message : 'An unexpected error occurred',
       },
-      { status: 500 }
+      { status: 400 }
     )
   }
 }

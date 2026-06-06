@@ -111,9 +111,9 @@ export function MealForm({ onSubmit, isLoading }: MealFormProps) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
           >
-            <option value="low">Low ($10-15/day)</option>
-            <option value="medium">Medium ($15-30/day)</option>
-            <option value="high">High ($30+/day)</option>
+            <option value="low">Low (₹200-300/day)</option>
+            <option value="medium">Medium (₹300-600/day)</option>
+            <option value="high">High (₹600+/day)</option>
           </select>
         </div>
 

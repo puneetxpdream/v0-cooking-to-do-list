@@ -9,7 +9,7 @@ export const mealSchema = z.object({
       item: z.string().describe('Ingredient name'),
       quantity: z.string().describe('Quantity of the ingredient'),
       unit: z.string().describe('Unit of measurement (cups, grams, etc.)'),
-      estimatedCost: z.number().describe('Estimated cost in dollars'),
+      estimatedCost: z.number().describe('Estimated cost in Indian Rupees'),
     })
   ).describe('List of ingredients needed for this meal'),
 })
@@ -25,10 +25,10 @@ export const mealPlanResponseSchema = z.object({
       item: z.string().describe('Grocery item name'),
       quantity: z.string().describe('Total quantity needed'),
       unit: z.string().describe('Unit of measurement'),
-      estimatedCost: z.number().describe('Total cost for this item'),
+      estimatedCost: z.number().describe('Total cost for this item in Indian Rupees'),
       category: z.string().describe('Category (produce, protein, dairy, pantry, etc.)'),
     })
-  ).describe('Consolidated grocery list with estimated costs'),
+  ).describe('Consolidated grocery list with estimated costs in Indian Rupees'),
   substitutions: z.array(
     z.object({
       originalItem: z.string().describe('Original ingredient'),
@@ -41,14 +41,14 @@ export const mealPlanResponseSchema = z.object({
     })
   ).describe('Dietary substitution suggestions'),
   budget: z.object({
-    total: z.number().describe('Total estimated cost in dollars'),
+    total: z.number().describe('Total estimated cost in Indian Rupees'),
     byMeal: z.object({
-      breakfast: z.number().describe('Estimated cost for breakfast'),
-      lunch: z.number().describe('Estimated cost for lunch'),
-      dinner: z.number().describe('Estimated cost for dinner'),
-    }).describe('Cost breakdown by meal'),
-    costPerServing: z.number().describe('Estimated cost per serving'),
-  }).describe('Budget summary and breakdown'),
+      breakfast: z.number().describe('Estimated cost for breakfast in Indian Rupees'),
+      lunch: z.number().describe('Estimated cost for lunch in Indian Rupees'),
+      dinner: z.number().describe('Estimated cost for dinner in Indian Rupees'),
+    }).describe('Cost breakdown by meal in Indian Rupees'),
+    costPerServing: z.number().describe('Estimated cost per serving in Indian Rupees'),
+  }).describe('Budget summary and breakdown in Indian Rupees'),
 })
 
 export type MealPlanResponse = z.infer<typeof mealPlanResponseSchema>

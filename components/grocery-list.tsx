@@ -62,7 +62,7 @@ export function GroceryList({ mealPlan }: GroceryListProps) {
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-gray-900">
-                        ${item.estimatedCost.toFixed(2)}
+                        ₹{item.estimatedCost.toFixed(0)}
                       </p>
                     </div>
                   </div>

@@ -29,7 +29,7 @@ export function MealPlanDisplay({ mealPlan }: MealPlanDisplayProps) {
             <li key={idx} className="text-sm text-gray-700">
               <span className="font-medium">{ingredient.item}</span>
               <span className="text-gray-600"> - {ingredient.quantity} {ingredient.unit}</span>
-              <span className="text-gray-500"> (${ingredient.estimatedCost.toFixed(2)})</span>
+              <span className="text-gray-500"> (₹{ingredient.estimatedCost.toFixed(0)})</span>
             </li>
           ))}
         </ul>

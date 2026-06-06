@@ -20,26 +20,33 @@ export async function POST(request: Request) {
       )
     }
 
-    const systemPrompt = `You are an expert meal planner who creates personalized daily meal plans. Your goals are to:
-1. Create nutritious, varied meals that respect dietary preferences and allergies
-2. Optimize for the specified budget constraint
+    const systemPrompt = `You are an expert Indian meal planner who creates personalized daily meal plans using Indian ingredients and cooking styles. Your goals are to:
+1. Create nutritious, varied Indian meals that respect dietary preferences and allergies
+2. Optimize for the specified budget constraint using Indian market prices
 3. Provide practical ingredient substitutions for common dietary needs
-4. Calculate accurate costs and portions
+4. Calculate accurate costs and portions using Indian Rupees (₹)
 
 Always provide meals that are:
-- Balanced (protein, carbs, vegetables)
+- Balanced with Indian cooking traditions (protein, carbs, vegetables, spices)
 - Realistic to cook for the specified number of servings
-- Within the budget constraint
-- Mindful of the person's daily routine and energy needs`
+- Within the budget constraint using realistic Indian grocery prices
+- Mindful of the person's daily routine and energy needs
+- Feature authentic Indian recipes and common Indian ingredients available at local markets`
+
+    const budgetMap = {
+      low: '₹200-300 per day',
+      medium: '₹300-600 per day',
+      high: '₹600+ per day'
+    }
 
     const userMessage = `Please create a daily meal plan with the following preferences:
 - Daily Routine: ${dailyRoutine}
 - Dietary Preferences: ${dietaryPreferences}
 - Allergies/Restrictions: ${allergies || 'None'}
-- Budget Constraint: ${budget}
+- Budget Constraint: ${budgetMap[budget as keyof typeof budgetMap]}
 - Number of Servings: ${servings}
 
-Generate a complete meal plan including breakfast, lunch, and dinner. For each meal, provide the recipe name, description, cooking time, and all ingredients with quantities and estimated costs. Also provide a consolidated grocery list, dietary substitutions, and a budget breakdown.`
+Generate a complete Indian meal plan including breakfast, lunch, and dinner. For each meal, provide the recipe name, description, cooking time, and all ingredients with quantities and estimated costs in Indian Rupees. Also provide a consolidated grocery list, dietary substitutions, and a budget breakdown. Use authentic Indian ingredients and cooking methods.`
 
     const result = await generateText({
       model: 'openai/gpt-4o-mini',
